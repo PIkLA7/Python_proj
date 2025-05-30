@@ -1,0 +1,31 @@
+<head> 
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<div class="header-bar">
+        <a href="{{ url_for('cabinet') }}">Мой кабинет</a>
+        <a href="{{ url_for('index') }}">Главная</a>
+    </div>
+<div class="container">
+<h1>Моё расписание на сегодня</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Время</th>
+            <th>Группа</th>
+            <th>Предмет</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lesson in schedule %}
+        <tr>
+            <td>{{ lesson.date }}</td>
+            <td>{{ lesson.time_slot }}</td>
+            <td>{{ lesson.group_name }}</td>
+            <td>{{ lesson.subject_name }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('view_schedule') }}">Назад</a>
+</div>

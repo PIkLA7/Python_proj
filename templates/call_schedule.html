@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>График звонков</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>График звонков</h1>
+
+    <form method="POST">
+        <label>Номер пары:</label><br>
+        <input type="number" name="pair_number" required><br>
+
+        <label>Начало:</label><br>
+        <input type="time" name="start_time" required><br>
+
+        <label>Окончание:</label><br>
+        <input type="time" name="end_time" required><br>
+
+        <button type="submit">Добавить</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Пара</th>
+            <th>Начало</th>
+            <th>Окончание</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pair in schedule %}
+            <tr>
+                <td>{{ pair.pair_number }}</td>
+                <td>{{ pair.start_time }}</td>
+                <td>{{ pair.end_time }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>

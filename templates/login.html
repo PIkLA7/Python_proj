@@ -1,0 +1,23 @@
+<head>
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<style>
+    div{
+        text-align: center;
+    }
+</style>
+<form method="POST">
+    <div class="header-bar">
+        
+        <a href="{{ url_for('index') }}">Главная</a>
+    </div>
+    <div class="container">
+        <h2>Авторизация</h2></br>
+    <label >Имя пользователя:</label></br>
+    <input type="text" name="username" required></br>
+    <label>Пароль:</label></br>
+    <input type="password" name="password" required></br>
+    <button type="submit">Войти</button>
+    </div>
+</form>

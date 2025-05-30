@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <title>Регистрация</title>
+
+</head>
+<body>
+
+
+    <div class="header-bar">
+        
+        <a href="{{ url_for('index') }}">Главная</a>
+    </div>
+    <div class="container">
+    <h1>Регистрация нового пользователя</h1>
+    <form action="{{ url_for('register') }}" method="POST">
+        <div class="form-group">
+        <label for="username">Логин:</label>
+        <input type="text" name="username" id="username" required>
+        </div>
+
+        <div class="form-group">
+        <label for="password">Пароль:</label>
+        <input type="password" name="password" id="password" required>
+        </div>
+
+        <div class="form-group">
+        <label for="confirm_password">Подтвердите пароль:</label>
+        <input type="password" name="confirm_password" id="confirm_password" required>
+        </div>
+
+        <div class="form-group">
+        <label for="special_user">
+            <input type="checkbox" name="special_user" id="special_user" onchange="toggleSecretPhrase()"> Регистрация специального пользователя
+        </label>
+        </div>
+
+        <div class="form-group">
+        <div id="secret_phrase_container" style="display: none;">
+            <div id="secret_phrase_div" style="display: none;">
+                <label>Секретная фраза</label>
+                <input type="text" name="secret_phrase">
+            </div>
+        </div>
+        <div class="form-group" id="teacher_fullname_div" style="display: none;">
+            <label for="teacher_fullname">ФИО преподавателя:</label>
+            <input type="text" name="teacher_fullname" id="teacher_fullname">
+        </div>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <script>
+        function toggleSecretPhrase() {
+            const container = document.getElementById('secret_phrase_container');
+            container.style.display = container.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.getElementById('special_user');
+    const secretPhraseDiv = document.getElementById('secret_phrase_div');
+    const teacherFullnameDiv = document.getElementById('teacher_fullname_div');
+    const secretInput = document.querySelector('input[name="secret_phrase"]');
+
+    function checkSecretPhrase() {
+        const phrase = secretInput.value.trim();
+        if (phrase === 'teacher_secret') {
+            teacherFullnameDiv.style.display = 'block';
+        } else {
+            teacherFullnameDiv.style.display = 'none';
+        }
+    }
+
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            secretPhraseDiv.style.display = 'block';
+            teacherFullnameDiv.style.display = 'none';
+        } else {
+            secretPhraseDiv.style.display = 'none';
+            teacherFullnameDiv.style.display = 'none';
+        }
+    });
+
+    secretInput.addEventListener('input', checkSecretPhrase);
+});
+</script>
+
+
+
+
+    </div>
+</body>
+</html>

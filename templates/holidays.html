@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выходные и праздники</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Выходные и праздники</h1>
+
+    <form method="POST">
+        <label>Дата:</label><br>
+        <input type="date" name="holiday_date" required><br>
+        <label>Описание:</label><br>
+        <input type="text" name="description" required><br>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Описание</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for holiday in holidays %}
+            <tr>
+                <td>{{ holiday.holiday_date }}</td>
+                <td>{{ holiday.description }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>

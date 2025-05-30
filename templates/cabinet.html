@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кабинет пользователя</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+    <h1>Добро пожаловать в кабинет</h1>
+    {% if role == 'admin' %}
+    <p>Вы вошли как администратор.</p>
+    <p>
+    <a href="{{ url_for('manage_groups') }}">Управление группами</a><br />
+    <a href="{{ url_for('manage_subjects') }}">Управление дисциплинами</a><br />
+    <a href="{{ url_for('manage_teachers') }}">Управление преподавателями</a><br />
+    <a href="{{ url_for('manage_auditoriums') }}">Управление аудиториями</a><br />
+    <a href="{{ url_for('semester_settings') }}">Параметры семестра</a><br />
+    <a href="{{ url_for('call_schedule') }}">График звонков</a><br />
+    <a href="{{ url_for('holidays') }}">Праздники и выходные</a><br />
+    <a href="{{ url_for('events') }}">Разовые мероприятия</a><br />
+    <a href="{{ url_for('export_workload_report') }}">Экспорт нагрузки преподавателей в Excel</a><br />
+    <a href="{{ url_for('export_full_schedule_analysis') }}">Экспорт полного анализа расписания</a><br />
+    <a href="{{ url_for('export_schedule_all') }}">Скачать расписание (Excel + Word)</a><br />
+    <a href="{{ url_for('download_report') }}">Скачать отчет по действиям пользователей</a><br />
+    </p>
+    {% elif role == 'teacher' %}
+    <p>Вы вошли как преподаватель.</p>
+    <a href="{{ url_for('export_schedule_all') }}">Скачать расписание (Excel + Word)</a>
+
+    {% else %}
+    <p>Вы вошли как пользователь.</p>
+    {% endif %}
+    <a href="{{ url_for('view_schedule') }}" class="button">|Просмотр расписания|</a>
+    <a href="{{ url_for('logout') }}">|Выйти|</a>
+    </div>
+</body>
+</html>

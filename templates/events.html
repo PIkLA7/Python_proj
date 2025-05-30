@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Разовые мероприятия</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Разовые мероприятия</h1>
+
+    <form method="POST">
+        <label>Название мероприятия:</label><br>
+        <input type="text" name="event_title" required><br>
+        <label>Описание:</label><br>
+        <textarea name="description" required></textarea><br>
+        <label>Дата:</label><br>
+        <input type="date" name="event_date" required><br>
+        <label>Пара (напр. 1 пара):</label><br>
+        <input type="text" name="time_slot" required><br>
+
+        <label>Группа:</label><br>
+        <select name="group_id">
+            {% for g in groups %}
+                <option value="{{ g.id }}">{{ g.group_name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label>Аудитория:</label><br>
+        <select name="auditorium_id">
+            {% for a in auditoriums %}
+                <option value="{{ a.id }}">{{ a.name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Добавить</button>
+    </form>
+
+    <h3>Список мероприятий:</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Мероприятие</th>
+            <th>Группа</th>
+            <th>Аудитория</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for e in events %}
+            <tr>
+                <td>{{ e.event_date }}</td>
+                <td>{{ e.event_title }}</td>
+                <td>{{ e.group_id }}</td>
+                <td>{{ e.auditorium_id }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>

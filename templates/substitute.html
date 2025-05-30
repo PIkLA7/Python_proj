@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Замена в расписании</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Замена в расписании</h1>
+        <p>Замена записи для:</p>
+        <ul>
+            <li><strong>Группа:</strong> {{ schedule.group_name }}</li>
+            <li><strong>Предмет:</strong> {{ schedule.subject_name }}</li>
+            <li><strong>Преподаватель:</strong> {{ schedule.teacher_name }}</li>
+            <li><strong>Дата:</strong> {{ schedule.date }}</li>
+            <li><strong>Время:</strong> {{ schedule.time_slot }}</li>
+        </ul>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="new_subject_id">Выберите новый предмет:</label>
+                <select name="new_subject_id" id="new_subject_id" required>
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="new_teacher_id">Выберите нового преподавателя:</label>
+                <select name="new_teacher_id" id="new_teacher_id" required>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="replacement_date">Дата замены:</label>
+                <input type="date" name="replacement_date" id="replacement_date" required>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_half_lesson"> Половина занятия
+                </label>
+            </div>
+            <button type="submit">Сохранить замену</button>
+            <a href="{{ url_for('view_schedule') }}">Отмена</a>
+        </form>
+    </div>
+</body>
+</html>

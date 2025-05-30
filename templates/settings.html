@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Параметры семестра</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Параметры семестра</h1>
+
+    <form method="POST">
+        <label>Название семестра:</label><br>
+        <input type="text" name="semester_name" required><br>
+
+        <label>Дата начала:</label><br>
+        <input type="date" name="start_date" required><br>
+
+        <label>Дата окончания:</label><br>
+        <input type="date" name="end_date" required><br>
+
+        <label>Количество недель:</label><br>
+        <input type="number" name="weeks_count" required><br>
+
+        <button type="submit">Сохранить</button>
+    </form>
+
+    {% if semester %}
+    <h3>Текущие параметры:</h3>
+    <ul>
+        <li><strong>Семестр:</strong> {{ semester.semester_name }}</li>
+        <li><strong>Начало:</strong> {{ semester.start_date }}</li>
+        <li><strong>Окончание:</strong> {{ semester.end_date }}</li>
+        <li><strong>Количество недель:</strong> {{ semester.weeks_count }}</li>
+    </ul>
+    {% endif %}
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>

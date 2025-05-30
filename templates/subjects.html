@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление дисциплинами</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Дисциплины</h1>
+
+    <form action="{{ url_for('add_subject') }}" method="POST" style="margin-bottom: 20px;">
+        <label>Название:</label><br>
+        <input type="text" name="name" required><br>
+        <label>Общее количество часов:</label><br>
+        <input type="number" name="total_hours" required><br>
+        <label>Часов в неделю:</label><br>
+        <input type="number" name="hours_per_week" required><br>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Всего часов</th>
+            <th>В неделю</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for subject in subjects %}
+            <tr>
+                <td>{{ subject.id }}</td>
+                <td>{{ subject.name }}</td>
+                <td>{{ subject.total_hours }}</td>
+                <td>{{ subject.hours_per_week }}</td>
+                <td>
+                    <a href="{{ url_for('delete_subject', id=subject.id) }}" onclick="return confirm('Удалить эту дисциплину?');">Удалить</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>

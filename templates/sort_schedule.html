@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сортировка расписания</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="header-bar">
+        <a href="{{ url_for('cabinet') }}">Мой кабинет</a>
+        <a href="{{ url_for('index') }}">Главная</a>
+    </div>
+    <div class="container">
+        <h1>Сортировка расписания</h1>
+        <a href="{{ url_for('search_schedule') }}">Поиск</a>
+        <!-- Форма для выбора поля сортировки -->
+        <form method="GET" action="{{ url_for('sort_schedule') }}">
+            
+            <form method="GET" action="{{ url_for('sort_schedule') }}">
+            <label for="sort_by">Сортировать по:</label>
+            <select id="sort_by" name="sort_by">
+                <option value="group_name" {% if request.args.get('sort_by') == 'group_name' %}selected{% endif %}>Группа</option>
+                <option value="subject_name" {% if request.args.get('sort_by') == 'subject_name' %}selected{% endif %}>Предмет</option>
+                <option value="teacher_name" {% if request.args.get('sort_by') == 'teacher_name' %}selected{% endif %}>Преподаватель</option>
+                <option value="date" {% if request.args.get('sort_by') == 'date' %}selected{% endif %}>Дата</option>
+                <option value="time_slot" {% if request.args.get('sort_by') == 'time_slot' %}selected{% endif %}>Время</option>
+            </select>
+            <button type="submit">Применить</button>
+        </form>
+
+        <!-- Таблица с расписанием -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Группа</th>
+                    <th>Предмет</th>
+                    <th>Преподаватель</th>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    {% if role == 'admin' %}
+                    <th>Действия</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in schedule %}
+                <tr>
+                    <td>{{ row.group_name }}</td>
+                    <td>{{ row.subject_name }}</td>
+                    <td>{{ row.teacher_name }}</td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.time_slot }}</td>
+                    {% if role == 'admin' %}
+                    <td>
+                        <a href="{{ url_for('substitute', schedule_id=row.id) }}">Замена</a> |
+                        <a href="{{ url_for('delete_schedule', id=row.id) }}" onclick="return confirm('Удалить запись?');">Удалить</a>
+                    </td>
+                    
+                    {% endif %} 
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% if role == 'admin' %}
+        <a href="{{ url_for('add_schedule') }}">|Добавить расписание|</a>
+        {% elif role == 'teacher' %}
+        <a href="{{ url_for('teacher_schedule') }}">|Мои пары|</a>
+        {% endif %}
+        
+    </div>
+</body>
+</html>

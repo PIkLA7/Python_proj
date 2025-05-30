@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление аудиториями</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Аудитории</h1>
+
+    <form action="{{ url_for('add_auditorium') }}" method="POST" style="margin-bottom: 20px;">
+        <label>Название аудитории:</label><br>
+        <input type="text" name="name" required><br>
+        <label>Вместимость:</label><br>
+        <input type="number" name="capacity"><br>
+        <label>Корпус:</label><br>
+        <input type="text" name="building"><br>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Вместимость</th>
+            <th>Корпус</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for aud in auditoriums %}
+            <tr>
+                <td>{{ aud.id }}</td>
+                <td>{{ aud.name }}</td>
+                <td>{{ aud.capacity }}</td>
+                <td>{{ aud.building }}</td>
+                <td>
+                    <a href="{{ url_for('delete_auditorium', id=aud.id) }}" onclick="return confirm('Удалить аудиторию?');">Удалить</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ url_for('cabinet') }}">Назад в кабинет</a>
+</div>
+</body>
+</html>
