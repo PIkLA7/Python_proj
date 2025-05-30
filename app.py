@@ -16,32 +16,79 @@ from zipfile import ZipFile
 import random
 from openpyxl.styles import Font
 from collections import defaultdict
+from dotenv import load_dotenv
 
+load_dotenv()  # Загружаем переменные из .env
 app = Flask(__name__)
 
 # Настройки подключения к базе данных
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Kukold666$'
-app.config['MYSQL_DB'] = 'college_schedule'
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
-app.config['SECRET_PHRASE_ADMIN'] = 'admin_secret'
-app.config['SECRET_PHRASE_TEACHER'] = 'teacher_secret'
+app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
+app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
+app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
+app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'college_schedule')
+app.config['MYSQL_CURSORCLASS'] = os.getenv('MYSQL_CURSORCLASS', 'DictCursor')
 
-REPORTS_FOLDER = 'downloads'
+app.config['SECRET_PHRASE_ADMIN'] = os.getenv('SECRET_PHRASE_ADMIN', 'admin_secret')
+app.config['SECRET_PHRASE_TEACHER'] = os.getenv('SECRET_PHRASE_TEACHER', 'teacher_secret')
 
-EXCEL_FILE_PATH = 'user_actions_report.xlsx'
+REPORTS_FOLDER = os.getenv('REPORTS_FOLDER', 'downloads')
+EXCEL_FILE_PATH = os.getenv('EXCEL_FILE_PATH', 'user_actions_report.xlsx')
 
-# Секретный ключ для сессий
-app.secret_key = 'your_secret_key'
+app.secret_key = os.getenv('SECRET_KEY', 'your_secret_key')
 
 mysql = MySQL(app)
 
 
+
+
+
+
+
+REQUIRED_ENV_VARS = [
+    'MYSQL_HOST', 'MYSQL_USER', 'MYSQL_PASSWORD', 'MYSQL_DB',
+    'MYSQL_CURSORCLASS', 'SECRET_KEY',
+    'SECRET_PHRASE_ADMIN', 'SECRET_PHRASE_TEACHER'
+]
+
+def is_configured():
+    return all(os.getenv(var) for var in REQUIRED_ENV_VARS)
+
+@app.route('/setup', methods=['GET', 'POST'])
+def setup():
+    if is_configured():
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        config = {
+            'MYSQL_HOST': request.form['MYSQL_HOST'],
+            'MYSQL_USER': request.form['MYSQL_USER'],
+            'MYSQL_PASSWORD': request.form['MYSQL_PASSWORD'],
+            'MYSQL_DB': request.form['MYSQL_DB'],
+            'MYSQL_CURSORCLASS': request.form['MYSQL_CURSORCLASS'],
+            'SECRET_KEY': request.form['SECRET_KEY'],
+            'SECRET_PHRASE_ADMIN': request.form['SECRET_PHRASE_ADMIN'],
+            'SECRET_PHRASE_TEACHER': request.form['SECRET_PHRASE_TEACHER'],
+            'REPORTS_FOLDER': request.form.get('REPORTS_FOLDER', 'downloads'),
+            'EXCEL_FILE_PATH': request.form.get('EXCEL_FILE_PATH', 'user_actions_report.xlsx')
+        }
+
+        # Сохраняем в .env
+        with open('.env', 'w') as f:
+            for key, value in config.items():
+                f.write(f"{key}={value}\n")
+
+        flash("Настройка завершена. Перезапустите приложение.")
+        return redirect(url_for('setup'))
+
+    return render_template('setup.html')  # HTML-форма с полями конфигурации
+
 # Главная страница
 @app.route('/')
 def index():
+    if not is_configured():
+        return render_template('not_ready.html')  # страница-заглушка
     return render_template('index.html')
+
 
 # Личный кабинет
 @app.route('/cabinet')
