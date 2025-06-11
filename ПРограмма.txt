@@ -1,0 +1,251 @@
+# -------------------------------
+# Управление группами (только admin)
+# -------------------------------
+@app.route('/groups')
+@role_required('admin')
+def manage_groups():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM grooups")
+    groups = cur.fetchall()
+    cur.close()
+    return render_template('groups.html', groups=groups)
+
+@app.route('/groups/add', methods=['POST'])
+@role_required('admin')
+def add_group():
+    group_name = request.form['group_name']
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO grooups (group_name) VALUES (%s)", (group_name,))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Добавлена группа: {group_name}", request.method)
+    return redirect(url_for('manage_groups'))
+
+@app.route('/groups/delete/<int:id>')
+@role_required('admin')
+def delete_group(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM grooups WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Удалена группа ID: {id}", request.method)
+    return redirect(url_for('manage_groups'))
+
+# -------------------------------
+# Управление дисциплинами (только admin)
+# -------------------------------
+@app.route('/subjects')
+@role_required('admin')
+def manage_subjects():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM subjects")
+    subjects = cur.fetchall()
+    cur.close()
+    return render_template('subjects.html', subjects=subjects)
+
+@app.route('/subjects/add', methods=['POST'])
+@role_required('admin')
+def add_subject():
+    name = request.form['name']
+    total_hours = request.form['total_hours']
+    hours_per_week = request.form['hours_per_week']
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        INSERT INTO subjects (name, total_hours, hours_per_week)
+        VALUES (%s, %s, %s)
+    """, (name, total_hours, hours_per_week))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Добавлена дисциплина: {name}", request.method)
+    return redirect(url_for('manage_subjects'))
+
+@app.route('/subjects/delete/<int:id>')
+@role_required('admin')
+def delete_subject(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM subjects WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Удалена дисциплина ID: {id}", request.method)
+    return redirect(url_for('manage_subjects'))
+
+# -------------------------------
+# Управление преподавателями (только admin)
+# -------------------------------
+@app.route('/teachers')
+@role_required('admin')
+def manage_teachers():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM teachers")
+    teachers = cur.fetchall()
+    cur.close()
+    return render_template('teachers.html', teachers=teachers)
+
+@app.route('/teachers/add', methods=['POST'])
+@role_required('admin')
+def add_teacher():
+    full_name = request.form['full_name']
+    department = request.form['department']
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO teachers (full_name, department) VALUES (%s, %s)", (full_name, department))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Добавлен преподаватель: {full_name}", request.method)
+    return redirect(url_for('manage_teachers'))
+
+@app.route('/teachers/delete/<int:id>')
+@role_required('admin')
+def delete_teacher(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM teachers WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Удалён преподаватель ID: {id}", request.method)
+    return redirect(url_for('manage_teachers'))
+
+# -------------------------------
+# Управление аудиториями (только admin)
+# -------------------------------
+@app.route('/auditoriums')
+@role_required('admin')
+def manage_auditoriums():
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM auditoriums")
+    auditoriums = cur.fetchall()
+    cur.close()
+    return render_template('auditoriums.html', auditoriums=auditoriums)
+
+@app.route('/auditoriums/add', methods=['POST'])
+@role_required('admin')
+def add_auditorium():
+    name = request.form['name']
+    capacity = request.form['capacity']
+    building = request.form['building']
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO auditoriums (name, capacity, building) VALUES (%s, %s, %s)", (name, capacity, building))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Добавлена аудитория: {name}", request.method)
+    return redirect(url_for('manage_auditoriums'))
+
+@app.route('/auditoriums/delete/<int:id>')
+@role_required('admin')
+def delete_auditorium(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM auditoriums WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    log_user_action(session['user_id'], f"Удалена аудитория ID: {id}", request.method)
+    return redirect(url_for('manage_auditoriums'))
+
+
+# -------------------------------
+# Параметры семестра (только admin)
+# -------------------------------
+@app.route('/semester', methods=['GET', 'POST'])
+@role_required('admin')
+def semester_settings():
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        semester_name = request.form['semester_name']
+        start_date = request.form['start_date']
+        end_date = request.form['end_date']
+        weeks_count = request.form['weeks_count']
+
+        cur.execute("""
+            INSERT INTO semester_settings (semester_name, start_date, end_date, weeks_count)
+            VALUES (%s, %s, %s, %s)
+        """, (semester_name, start_date, end_date, weeks_count))
+        # Очищаем расписание
+        cur.execute("DELETE FROM replacements")
+        cur.execute("DELETE FROM schedules")
+        
+        mysql.connection.commit()
+        log_user_action(session['user_id'], f"Изменены параметры семестра: {semester_name}", request.method)
+
+    cur.execute("SELECT * FROM semester_settings ORDER BY id DESC LIMIT 1")
+    semester = cur.fetchone()
+    cur.close()
+    return render_template('settings.html', semester=semester)
+
+
+
+# -------------------------------
+# График звонков (только admin)
+# -------------------------------
+@app.route('/call_schedule', methods=['GET', 'POST'])
+@role_required('admin')
+def call_schedule():
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        pair_number = request.form['pair_number']
+        start_time = request.form['start_time']
+        end_time = request.form['end_time']
+
+        cur.execute("""
+            INSERT INTO call_schedule (pair_number, start_time, end_time)
+            VALUES (%s, %s, %s)
+        """, (pair_number, start_time, end_time))
+        mysql.connection.commit()
+        log_user_action(session['user_id'], "Добавлен звонок", request.method)
+
+    cur.execute("SELECT * FROM call_schedule ORDER BY pair_number")
+    schedule = cur.fetchall()
+    cur.close()
+    return render_template('call_schedule.html', schedule=schedule)
+
+
+# -------------------------------
+# Управление праздниками (только admin)
+# -------------------------------
+@app.route('/holidays', methods=['GET', 'POST'])
+@role_required('admin')
+def holidays():
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        holiday_date = request.form['holiday_date']
+        description = request.form['description']
+        cur.execute("INSERT INTO holidays (holiday_date, description) VALUES (%s, %s)", (holiday_date, description))
+        mysql.connection.commit()
+        log_user_action(session['user_id'], f"Добавлен выходной: {holiday_date}", request.method)
+
+    cur.execute("SELECT * FROM holidays ORDER BY holiday_date")
+    holidays = cur.fetchall()
+    cur.close()
+    return render_template('holidays.html', holidays=holidays)
+
+
+
+# -------------------------------
+# Разовые мероприятия (только admin)
+# -------------------------------
+@app.route('/events', methods=['GET', 'POST'])
+@role_required('admin')
+def events():
+    cur = mysql.connection.cursor()
+
+    if request.method == 'POST':
+        title = request.form['event_title']
+        description = request.form['description']
+        date = request.form['event_date']
+        time_slot = request.form['time_slot']
+        group_id = request.form['group_id']
+        auditorium_id = request.form['auditorium_id']
+
+        cur.execute("""
+            INSERT INTO events (event_title, description, event_date, time_slot, group_id, auditorium_id)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """, (title, description, date, time_slot, group_id, auditorium_id))
+        mysql.connection.commit()
+        log_user_action(session['user_id'], f"Добавлено мероприятие: {title}", request.method)
+
+    cur.execute("SELECT * FROM events ORDER BY event_date")
+    events = cur.fetchall()
+    cur.execute("SELECT * FROM grooups")
+    groups = cur.fetchall()
+    cur.execute("SELECT * FROM auditoriums")
+    auditoriums = cur.fetchall()
+    cur.close()

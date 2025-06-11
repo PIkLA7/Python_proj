@@ -18,13 +18,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: college_schedule
-      MYSQL_USER: root
-      MYSQL_PASSWORD: your_mysql_password
+      MYSQL_USER: college_user
+      MYSQL_PASSWORD: college_pass
+
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+      - ./init_db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
   mysql_data:

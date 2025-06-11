@@ -23,8 +23,8 @@ app = Flask(__name__)
 
 # Настройки подключения к базе данных
 app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST', 'localhost')
-app.config['MYSQL_USER'] = os.getenv('MYSQL_USER', 'root')
-app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD', '')
+app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER', 'college_user')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', 'college_pass')
 app.config['MYSQL_DB'] = os.getenv('MYSQL_DB', 'college_schedule')
 app.config['MYSQL_CURSORCLASS'] = os.getenv('MYSQL_CURSORCLASS', 'DictCursor')
 
