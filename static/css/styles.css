@@ -31,6 +31,7 @@ table th, table td {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: left;
+    white-space: nowrap;
 }
 
 table th {
@@ -82,4 +83,59 @@ a:hover {
 
 .header-bar a:hover {
     text-decoration: underline;
+}
+
+/* ✅ Адаптивные улучшения только при необходимости */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 22px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .header-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    button, input, select {
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    .container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .header-bar a {
+        font-size: 14px;
+    }
+
+    table th, table td {
+        font-size: 13px;
+        padding: 6px;
+    }
 }
